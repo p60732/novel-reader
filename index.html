@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>📖</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;600&display=swap');
+:root{
+  --bg:#000;--bg2:#0c0c12;--card:#151520;
+  --gold:#c8a96e;--gold2:#e8d4a8;
+  --text:#e0d8cc;--dim:#666;--dim2:#222;--red:#c0392b;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;background:var(--bg);font-family:'Noto Serif TC',-apple-system,serif;color:var(--text);font-size:14px}
+body{padding:10px 8px 32px;max-width:260px;margin:0 auto}
+
+/* Header */
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:6px 2px 10px;border-bottom:1px solid var(--dim2);margin-bottom:10px}
+.hdr-title{font-size:12px;color:var(--gold);letter-spacing:3px}
+.hdr-right{display:flex;align-items:center;gap:8px}
+.hdr-clock{font-size:11px;color:var(--dim)}
+.hdr-sync{font-size:16px;cursor:pointer;transition:transform .3s}
+.hdr-sync.spinning{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Continue */
+.continue-card{background:linear-gradient(135deg,#1a1508,#0e0c06);border:1px solid rgba(200,169,110,.25);border-radius:14px;padding:12px;display:flex;align-items:center;gap:10px;cursor:pointer;margin-bottom:10px;transition:all .15s}
+.continue-card:active{transform:scale(.97);border-color:rgba(200,169,110,.5)}
+.cc-icon{font-size:24px;flex-shrink:0}
+.cc-body{flex:1;min-width:0}
+.cc-title{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cc-sub{font-size:10px;color:var(--gold);margin-top:2px}
+.cc-arr{font-size:16px;color:var(--gold)}
+
+/* Nav grid */
+.nav-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+.nav-btn{background:var(--card);border:1px solid var(--dim2);border-radius:14px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:all .15s}
+.nav-btn:active{background:rgba(200,169,110,.1);border-color:var(--gold);transform:scale(.95)}
+.nb-icon{font-size:20px}
+.nb-label{font-size:10px;color:var(--dim);letter-spacing:1px}
+
+/* Section */
+.sec{margin-bottom:12px}
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.sec-title{font-size:9px;letter-spacing:3px;color:var(--dim)}
+.sec-action{font-size:10px;color:var(--gold);cursor:pointer}
+
+/* Bookmark items */
+.bm-item{background:var(--card);border:1px solid var(--dim2);border-radius:12px;padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:8px;cursor:pointer;transition:all .15s}
+.bm-item:active{background:rgba(200,169,110,.08);border-color:rgba(200,169,110,.3)}
+.bm-bar{width:3px;height:32px;border-radius:3px;background:linear-gradient(180deg,var(--gold),transparent);flex-shrink:0}
+.bm-info{flex:1;min-width:0}
+.bm-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bm-ch{font-size:10px;color:var(--gold);margin-top:2px}
+.bm-x{width:22px;height:22px;border-radius:50%;background:rgba(192,57,43,.12);display:flex;align-items:center;justify-content:center;font-size:13px;color:rgba(192,57,43,.5);cursor:pointer;flex-shrink:0}
+.bm-x:active{background:rgba(192,57,43,.3);color:var(--red)}
+
+/* Chapter nav */
+.ch-box{background:var(--card);border:1px solid var(--dim2);border-radius:14px;padding:12px;margin-bottom:8px}
+.ch-num-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px}
+.ch-num{font-size:38px;font-weight:300;color:var(--gold);letter-spacing:-1px;min-width:60px;text-align:center}
+.ch-adj{width:36px;height:36px;border-radius:10px;background:rgba(200,169,110,.1);border:1px solid rgba(200,169,110,.2);color:var(--gold);font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700;flex-shrink:0}
+.ch-adj:active{background:rgba(200,169,110,.25)}
+.ch-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.ch-btn{background:var(--card);border:1px solid var(--dim2);border-radius:10px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;transition:all .15s}
+.ch-btn:active{background:rgba(200,169,110,.1);border-color:var(--gold)}
+.cb-icon{font-size:16px}
+.cb-label{font-size:9px;color:var(--dim);letter-spacing:1px}
+
+/* Form */
+.form-group{margin-bottom:8px}
+.f-label{font-size:9px;letter-spacing:2px;color:var(--dim);margin-bottom:4px}
+.f-input{width:100%;background:var(--card);border:1px solid var(--dim2);border-radius:10px;padding:11px 12px;font-size:12px;color:var(--text);font-family:inherit;outline:none;-webkit-appearance:none}
+.f-input:focus{border-color:var(--gold)}
+.f-input::placeholder{color:var(--dim);font-size:11px}
+.f-btn{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;border-radius:12px;padding:13px;font-size:13px;font-weight:700;color:#000;cursor:pointer;font-family:inherit;letter-spacing:2px;margin-top:6px;transition:opacity .15s,transform .15s}
+.f-btn:active{opacity:.8;transform:scale(.97)}
+.f-btn-del{background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.2);color:var(--red);margin-top:0}
+
+/* Go btn */
+.go-btn{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;border-radius:12px;padding:13px;font-size:13px;font-weight:700;color:#000;cursor:pointer;font-family:inherit;letter-spacing:3px;margin-top:4px;transition:opacity .15s,transform .15s}
+.go-btn:active{opacity:.8;transform:scale(.97)}
+
+/* Tabs */
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tab{flex:1;padding:8px;text-align:center;font-size:10px;color:var(--dim);border-bottom:2px solid transparent;cursor:pointer;letter-spacing:1px;transition:all .2s}
+.tab.active{color:var(--gold);border-color:var(--gold)}
+
+/* Toast */
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(8px);background:rgba(200,169,110,.15);border:1px solid rgba(200,169,110,.3);border-radius:16px;padding:7px 16px;font-size:11px;color:var(--gold2);letter-spacing:1px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:999;white-space:nowrap}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Status */
+.sync-status{font-size:9px;color:var(--dim);text-align:center;margin-bottom:8px;letter-spacing:1px}
+.sync-status.ok{color:rgba(39,174,96,.6)}
+.sync-status.err{color:rgba(192,57,43,.6)}
+
+.empty{text-align:center;padding:20px;color:var(--dim);font-size:11px;letter-spacing:1px;line-height:2}
+
+::-webkit-scrollbar{display:none}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-title">📖 閱讀器</div>
+  <div class="hdr-right">
+    <div class="hdr-clock" id="clock">--:--</div>
+    <div class="hdr-sync" id="sync-btn" onclick="syncData()" title="同步">⟳</div>
+  </div>
+</div>
+
+<div class="sync-status" id="sync-status">點 ⟳ 同步雲端</div>
+
+<!-- 繼續閱讀 -->
+<div class="continue-card" onclick="continueReading()">
+  <div class="cc-icon">📖</div>
+  <div class="cc-body">
+    <div class="cc-title" id="home-title">尚無進度</div>
+    <div class="cc-sub" id="home-sub">新增書籤開始閱讀</div>
+  </div>
+  <div class="cc-arr">›</div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <div class="tab active" onclick="showTab('t-bm')">書籤</div>
+  <div class="tab" onclick="showTab('t-ch')">章節</div>
+  <div class="tab" onclick="showTab('t-add')">新增</div>
+</div>
+
+<!-- 書籤 tab -->
+<div id="t-bm">
+  <div id="bm-list"></div>
+</div>
+
+<!-- 章節 tab -->
+<div id="t-ch" style="display:none">
+  <div class="ch-box">
+    <div style="font-size:10px;color:var(--dim);text-align:center;margin-bottom:8px;letter-spacing:1px" id="ch-book">請先選書</div>
+    <div class="ch-num-row">
+      <div class="ch-adj" onclick="adjCh(-10)">«</div>
+      <div class="ch-adj" onclick="adjCh(-1)">‹</div>
+      <div class="ch-num" id="ch-disp">—</div>
+      <div class="ch-adj" onclick="adjCh(1)">›</div>
+      <div class="ch-adj" onclick="adjCh(10)">»</div>
+    </div>
+  </div>
+  <button class="go-btn" onclick="goCh()">前　往</button>
+</div>
+
+<!-- 新增 tab -->
+<div id="t-add" style="display:none">
+  <div class="form-group">
+    <div class="f-label">書名</div>
+    <input class="f-input" id="inp-name" type="text" placeholder="例：三體" maxlength="20">
+  </div>
+  <div class="form-group">
+    <div class="f-label">章節網址</div>
+    <input class="f-input" id="inp-url" type="url" placeholder="https://czbooks.net/…" inputmode="url">
+  </div>
+  <button class="f-btn" onclick="saveBm()">儲　存</button>
+  <br><br>
+  <button class="f-btn f-btn-del" onclick="clearAll()">清除所有書籤</button>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── Config ──
+const API_KEY = '$2a$10$NcIwmp2lUFRhOfligN5xD.tvQLX92SLf/zqCCXbUkgDbYK.6KAUu6';
+const BIN_NAME = 'novel-reader-p60732';
+let BIN_ID = localStorage.getItem('jsonbin_id') || null;
+
+// ── State ──
+let D = { cur: null, bm: [] };
+
+// ── Clock ──
+function tick() {
+  const n = new Date();
+  document.getElementById('clock').textContent =
+    String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0');
+}
+tick(); setInterval(tick, 15000);
+
+// ── Toast ──
+let tt;
+function toast(m) {
+  const e = document.getElementById('toast');
+  e.textContent = m; e.classList.add('show');
+  clearTimeout(tt); tt = setTimeout(() => e.classList.remove('show'), 2000);
+}
+
+function setStatus(msg, type) {
+  const el = document.getElementById('sync-status');
+  el.textContent = msg;
+  el.className = 'sync-status' + (type ? ' ' + type : '');
+}
+
+// ── JSONBin API ──
+async function createBin() {
+  const res = await fetch('https://api.jsonbin.io/v3/b', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Master-Key': API_KEY,
+      'X-Bin-Name': BIN_NAME,
+      'X-Bin-Private': 'false'
+    },
+    body: JSON.stringify(D)
+  });
+  const data = await res.json();
+  BIN_ID = data.metadata.id;
+  localStorage.setItem('jsonbin_id', BIN_ID);
+  return BIN_ID;
+}
+
+async function readBin() {
+  const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+    headers: { 'X-Master-Key': API_KEY }
+  });
+  const data = await res.json();
+  return data.record;
+}
+
+async function writeBin() {
+  await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Master-Key': API_KEY
+    },
+    body: JSON.stringify(D)
+  });
+}
+
+async function syncData() {
+  const btn = document.getElementById('sync-btn');
+  btn.classList.add('spinning');
+  setStatus('同步中…');
+  try {
+    if (!BIN_ID) {
+      // 第一次：建立新 bin
+      await createBin();
+      await writeBin();
+      setStatus('✓ 雲端已建立', 'ok');
+    } else {
+      // 讀取雲端資料，合併書籤
+      const remote = await readBin();
+      // 合併：以雲端為主，補上本地有但雲端沒有的
+      const remoteIds = new Set((remote.bm || []).map(b => b.id));
+      const localOnly = D.bm.filter(b => !remoteIds.has(b.id));
+      D.bm = [...(remote.bm || []), ...localOnly];
+      D.cur = remote.cur || D.cur;
+      // 寫回合併結果
+      await writeBin();
+      saveLocal();
+      updateHome();
+      renderBm();
+      if (document.getElementById('t-ch').style.display !== 'none') renderCh();
+      setStatus('✓ 已同步 ' + new Date().toLocaleTimeString('zh-TW', {hour:'2-digit',minute:'2-digit'}), 'ok');
+    }
+    toast('同步完成 ✓');
+  } catch (e) {
+    setStatus('同步失敗，請重試', 'err');
+    toast('同步失敗');
+  }
+  btn.classList.remove('spinning');
+}
+
+// ── Local storage ──
+function saveLocal() { localStorage.setItem('nv3', JSON.stringify(D)); }
+function loadLocal() {
+  try { return JSON.parse(localStorage.getItem('nv3')) || { cur: null, bm: [] }; }
+  catch { return { cur: null, bm: [] }; }
+}
+
+// ── Save both local + cloud ──
+async function saveAll() {
+  saveLocal();
+  if (BIN_ID) {
+    try { await writeBin(); } catch(e) {}
+  }
+}
+
+// ── URL helpers ──
+function parseCh(url) { const m = url.match(/[?&]chapterNumber=(\d+)/); return m ? parseInt(m[1]) : null; }
+function setCh(url, n) {
+  if (/[?&]chapterNumber=\d+/.test(url)) return url.replace(/([?&]chapterNumber=)\d+/, '$1' + n);
+  return url + (url.includes('?') ? '&' : '?') + 'chapterNumber=' + n;
+}
+
+// ── Tabs ──
+function showTab(id) {
+  ['t-bm','t-ch','t-add'].forEach(t => {
+    document.getElementById(t).style.display = t === id ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach((el, i) => {
+    el.classList.toggle('active', ['t-bm','t-ch','t-add'][i] === id);
+  });
+  if (id === 't-ch') renderCh();
+}
+
+// ── Home ──
+function updateHome() {
+  const c = D.cur;
+  if (c) {
+    const ch = parseCh(c.url);
+    document.getElementById('home-title').textContent = c.name || '繼續閱讀';
+    document.getElementById('home-sub').textContent = ch ? '第 ' + ch + ' 章' : '點擊繼續';
+  } else {
+    document.getElementById('home-title').textContent = '尚無進度';
+    document.getElementById('home-sub').textContent = '新增書籤開始閱讀';
+  }
+}
+
+function continueReading() {
+  if (!D.cur) { toast('請先新增書籤'); return; }
+  window.location.href = D.cur.url;
+}
+
+// ── Chapter ──
+let tCh = 1;
+function renderCh() {
+  const c = D.cur;
+  document.getElementById('ch-book').textContent = c ? (c.name || '目前書籍') : '請先選擇書籍';
+  tCh = c ? (parseCh(c.url) || 1) : 1;
+  document.getElementById('ch-disp').textContent = tCh;
+}
+function adjCh(d) { tCh = Math.max(1, tCh + d); document.getElementById('ch-disp').textContent = tCh; }
+async function goCh() {
+  if (!D.cur) { toast('請先新增書籤'); return; }
+  const url = setCh(D.cur.url, tCh);
+  D.cur = { ...D.cur, url };
+  await saveAll();
+  updateHome();
+  toast('前往第 ' + tCh + ' 章…');
+  setTimeout(() => { window.location.href = url; }, 700);
+}
+
+// ── Bookmarks ──
+async function saveBm() {
+  const name = document.getElementById('inp-name').value.trim();
+  const url = document.getElementById('inp-url').value.trim();
+  if (!url) { toast('請輸入網址'); return; }
+  if (!url.startsWith('http')) { toast('網址格式錯誤'); return; }
+  const e = { id: Date.now(), name: name || ('書籤' + (D.bm.length + 1)), url };
+  D.bm.unshift(e);
+  D.cur = { name: e.name, url };
+  await saveAll();
+  document.getElementById('inp-name').value = '';
+  document.getElementById('inp-url').value = '';
+  updateHome();
+  renderBm();
+  toast('已儲存 ✓');
+  showTab('t-bm');
+}
+
+function renderBm() {
+  const el = document.getElementById('bm-list');
+  if (!D.bm.length) {
+    el.innerHTML = '<div class="empty">📚<br>尚無書籤<br>點「新增」加入</div>';
+    return;
+  }
+  el.innerHTML = D.bm.map(b => {
+    const ch = parseCh(b.url);
+    return `<div class="bm-item" onclick="openBm(${b.id})">
+      <div class="bm-bar"></div>
+      <div class="bm-info">
+        <div class="bm-name">${esc(b.name)}</div>
+        <div class="bm-ch">${ch ? '第 ' + ch + ' 章' : '—'}</div>
+      </div>
+      <div class="bm-x" onclick="event.stopPropagation();delBm(${b.id})">×</div>
+    </div>`;
+  }).join('');
+}
+
+async function openBm(id) {
+  const b = D.bm.find(x => x.id === id);
+  if (!b) return;
+  D.cur = { name: b.name, url: b.url };
+  await saveAll();
+  updateHome();
+  window.location.href = b.url;
+}
+
+async function delBm(id) {
+  D.bm = D.bm.filter(x => x.id !== id);
+  if (!D.bm.length) D.cur = null;
+  await saveAll();
+  renderBm();
+  updateHome();
+  toast('已刪除');
+}
+
+async function clearAll() {
+  if (!confirm('確定清除所有書籤？')) return;
+  D.bm = []; D.cur = null;
+  await saveAll();
+  updateHome(); renderBm();
+  toast('已清除');
+}
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ── Init ──
+D = loadLocal();
+updateHome();
+renderBm();
+
+// 自動同步（如果已有 BIN_ID）
+if (BIN_ID) { syncData(); }
+</script>
+</body>
+</html>
